@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/style.css">
+    <title>Restaurant Recommender</title>
+</head>
+<body>
+    <div class="container">
+        <p>Restaurant Recommender</p>
+        <div class="content">
+        <form action="/predict" accept-charset="utf-8">
+            <select class="input" name="name" required>
+                <option class="option" value="" disabled selected>Select a restaurant you like...</option>
+                {% for i in name %}
+                <option class="option" value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <button type="submit" class="button" onclick="myFunction()">Get Recommendation</button>
+        </form>
+        <div class="result_space">
+    {% if recs %}
+        {% for rec in recs %}
+        <div class="result">{{ rec }}</div>
+        {% endfor %}
+    {% elif error %}
+        <div class="result">{{ error }}</div>
+    {% endif %}
+</div>
+
+        </div>
+    </div>
+    <script>
+        function form_handler(event){
+            event.preventDefault();
+        }
+        function send_data(){
+            document.querySelector('form').addEventListener('submit', form_handler);
+            var fd = new FormData(document.querySelector('form'));
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/predict", True);
+            document.getElementById("prediction").innerHTML = "Predicting...";
+            xhr.onreadystatechange=function(){
+                if(xhr.readyState==4 && xhr.status==200){
+                    document.getElementById("prediction").innerHTML="Prediction: "+xhr.responseText;
+                }
+            }
+            xhr.send(fd);
+        }
+    </script>    
+</body>
+</html>
